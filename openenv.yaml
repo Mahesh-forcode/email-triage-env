@@ -1,0 +1,55 @@
+name: email-triage-env
+version: "1.0.0"
+description: >
+  A real-world email triage environment where an AI agent learns to classify,
+  categorize, and fully triage emails. Three tasks of increasing difficulty.
+author: hackathon-participant
+tags:
+  - openenv
+  - email
+  - nlp
+  - triage
+  - classification
+
+tasks:
+  - name: spam_detection
+    difficulty: easy
+    description: Classify each email as spam or ham
+    max_steps: 10
+    reward_range: [0.0, 1.0]
+
+  - name: categorization
+    difficulty: medium
+    description: Assign emails to correct category (work/personal/shopping/promotions)
+    max_steps: 10
+    reward_range: [0.0, 1.0]
+
+  - name: full_triage
+    difficulty: hard
+    description: Assign priority + write summary + draft reply for each email
+    max_steps: 5
+    reward_range: [0.0, 1.0]
+
+observation_space:
+  email_id: string
+  subject: string
+  sender: string
+  body: string
+  task_type: string
+  task_description: string
+  available_actions: list[string]
+  feedback: string (optional)
+  done: boolean
+  reward: float (optional)
+
+action_space:
+  action_type: string  # classify / categorize / prioritize
+  label: string        # the predicted label
+  summary: string      # optional, for hard task
+  reply_draft: string  # optional, for hard task
+
+endpoints:
+  reset: POST /reset
+  step: POST /step
+  state: GET /state
+  health: GET /health
