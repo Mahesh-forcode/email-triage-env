@@ -1,8 +1,8 @@
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import uvicorn
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional
 from models import EmailTriageAction, EmailTriageObservation, EmailTriageState
@@ -14,8 +14,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# One environment instance per task type, stored in memory
-_envs: dict[str, EmailTriageEnvironment] = {}
+_envs: dict = {}
 
 def get_env(task_type: str = "spam_detection") -> EmailTriageEnvironment:
     if task_type not in _envs:
@@ -87,3 +86,11 @@ def list_tasks():
             {"name": "full_triage", "difficulty": "hard", "description": "Priority + summary + reply draft for each email"},
         ]
     }
+
+
+def main():
+    uvicorn.run("server.app:app", host="0.0.0.0", port=7860, reload=False)
+
+
+if __name__ == "__main__":
+    main()
